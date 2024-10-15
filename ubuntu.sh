@@ -4,7 +4,7 @@ time1="$( date +"%r" )"
 
 install1 () {
 directory=ubuntu-fs
-UBUNTU_VERSION=jammy
+UBUNTU_VERSION=noble
 if [ -d "$directory" ];then
 first=1
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;227m[WARNING]:\e[0m \x1b[38;5;87m Skipping the download and the extraction\n"
@@ -18,10 +18,10 @@ printf "\e[0m"
 exit 1
 fi
 if [ "$first" != 1 ];then
-if [ -f "ubuntu.tar.gz" ];then
-rm -rf ubuntu.tar.gz
+if [ -f "ubuntu.tar.xz" ];then
+rm -rf ubuntu.tar.xz
 fi
-if [ ! -f "ubuntu.tar.gz" ];then
+if [ ! -f "ubuntu.tar.xz" ];then
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Downloading the ubuntu rootfs, please wait...\n"
 ARCHITECTURE=$(dpkg --print-architecture)
 case "$ARCHITECTURE" in
@@ -35,7 +35,7 @@ exit 1
 
 esac
 
-wget https://partner-images.canonical.com/core/${UBUNTU_VERSION}/current/ubuntu-${UBUNTU_VERSION}-core-cloudimg-${ARCHITECTURE}-root.tar.gz -q -O ubuntu.tar.gz 
+wget https://cloud-images.ubuntu.com/${UBUNTU_VERSION}/current/${UBUNTU_VERSION}-server-cloudimg-${ARCHITECTURE}-root.tar.xz -q -O ubuntu.tar.xz
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Download complete!\n"
 
 fi
@@ -44,7 +44,7 @@ cur=`pwd`
 mkdir -p $directory
 cd $directory
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Decompressing the ubuntu rootfs, please wait...\n"
-proot --link2symlink tar -zxf $cur/ubuntu.tar.gz --exclude='dev'||:
+proot --link2symlink tar -Jxf $cur/ubuntu.tar.xz --exclude='dev'||:
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m The ubuntu rootfs have been successfully decompressed!\n"
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Fixing the resolv.conf, so that you have access to the internet\n"
 printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > etc/resolv.conf
@@ -109,7 +109,7 @@ printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m
 chmod +x $bin
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Successfully made startubuntu.sh executable\n"
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Cleaning up please wait...\n"
-rm ubuntu.tar.gz -rf
+rm ubuntu.tar.xz -rf
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m Successfully cleaned up!\n"
 printf "\x1b[38;5;214m[${time1}]\e[0m \x1b[38;5;83m[Installer thread/INFO]:\e[0m \x1b[38;5;87m The installation has been completed! You can now launch Ubuntu with ./startubuntu.sh\n"
 printf "\e[0m"
